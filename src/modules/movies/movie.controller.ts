@@ -55,8 +55,29 @@ const getMovieById= async (req:Request,res:Response)=>{
 
 }
 
+//get slug
+const getMovieBySlug=async(req:Request,res:Response)=>{
+    try{
+        const {slug}=req.params;
+    const result= await MovieService.getMovieBySlug(slug)
+    res.send({
+        success:true,
+        message:"Movies fetch slug successfully",
+        data:result
+    })
+    }catch(err){
+        res.status(500).json({
+            success:false,
+            message:"could not slug fetch susccessfully",
+            data:err
+        })
+    }
+
+}
+
 export const MovieController={
     createMovies,
     getAllMovies,
-    getMovieById
+    getMovieById,
+    getMovieBySlug
 }

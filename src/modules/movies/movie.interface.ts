@@ -11,7 +11,7 @@ export type TMovie = {
     releaseDate: Date;
     genre:string;
     reviews:[TReview];
-    // slug:string;
+    slug:string;
     viewCount:number;
     isDeleted?:boolean;
 }
