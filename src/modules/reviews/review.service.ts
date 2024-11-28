@@ -29,8 +29,8 @@ const addReview=async(slug:string, reviewData:Partial<TReview>):Promise<TReview 
                 return review[0];
                
                 }catch(err){
-                    console.log(err)
                     await session.abortTransaction();
+                    throw err;
 
                 }
                 session.endSession();
