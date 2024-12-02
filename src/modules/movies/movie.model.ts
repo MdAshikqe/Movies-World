@@ -7,7 +7,8 @@ import slugify from "slugify";
 const movieSchema= new Schema<TMovie>({
     title:{
         type:String,
-        required:[true,"Title is required"]
+        required:[true,"Title is required"],
+        unique:true
     },
     description:{
         type:String,

@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { MovieService } from "./movie.service";
 
 
 //create movies
-const createMovies= async (req:Request,res:Response)=>{
-    const movieData=req.body;
+const createMovies= async (req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const movieData=req.body;
     const result= await MovieService.createMovies(movieData)
     
     res.send({
@@ -12,6 +13,10 @@ const createMovies= async (req:Request,res:Response)=>{
         message:'Movie created successfully',
         data:result
     })
+        
+    } catch (err) {
+        next(err)
+    }
 
 }
 //get all movies
@@ -35,7 +40,7 @@ const getAllMovies= async(req:Request,res:Response)=>{
 
 
 //get single movie by id-----
-const getMovieById= async (req:Request,res:Response)=>{
+const getMovieById= async (req:Request,res:Response,next:NextFunction)=>{
     try{
         const {movieId}=req.params;
     const result= await MovieService.getMovieById(movieId)
@@ -46,11 +51,12 @@ const getMovieById= async (req:Request,res:Response)=>{
         data:result
     })
     }catch(err){
-        res.status(500).json({
-            success:false,
-            message:'Could not fetch movies',
-            error:err
-        })
+        // res.status(500).json({
+        //     success:false,
+        //     message:'Could not fetch movies',
+        //     error:err
+        // })
+        next(err)
     }
 
 }

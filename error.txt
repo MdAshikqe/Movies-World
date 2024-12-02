@@ -1,0 +1,43 @@
+---------------//validation error
+{
+
+    "err": {
+        "errors": {
+            "title":{
+            }
+        },
+
+        "name": "ValidationError",
+  
+    }
+}
+
+
+
+--------//cast error
+{
+
+    "err": {
+        "errors": {
+            "releaseDate": {
+
+                },
+                "name": "CastError",
+            }
+        },
+
+    }
+
+    ------------- error massage pattern --- je ta amra sob error masage flow korbo ---
+    {
+        success:false,
+        message: "validationError",
+        errorSource:[{
+            path:"genre",
+            message:"genre is required!"
+        }]
+    }
+
+
+   ---------------- duplicate error
+
