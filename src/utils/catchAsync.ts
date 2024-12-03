@@ -16,11 +16,12 @@ export const catchAsync= (fn: any)=>{
         // }
 
         return Promise.resolve(fn(req,res,next)).catch(error=>{
-            res.status(500).json({
-                        success:false,
-                        message:"Something went wrong!",
-                        error:error,
-                    })
+            // res.status(500).json({
+            //             success:false,
+            //             message:"Something went wrong!",
+            //             error:error,
+            //         })
+            next(error)
         })
 
     }

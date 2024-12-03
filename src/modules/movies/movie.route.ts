@@ -9,7 +9,7 @@ const router=express.Router();
 
 router.post("/",validateZodRequest(zodMovieSchema.createZodValidationSchema), MovieController.createMovies)
 router.get("/",MovieController.getAllMovies)
-router.get("/:movieId",MovieController.getMovieById)
+// router.get("/:movieId",MovieController.getMovieById)
 router.get("/:slug",MovieController.getMovieBySlug)
 router.post("/:slug/review", ReviewController.addReview)
 
