@@ -1,11 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import { MovieService } from "./movie.service";
+import { z } from "zod";
+
+
+
+const zodMovieSchema= z.object({
+    body:z.object({
+    title:z.string(),
+    description:z.string(),
+    releaseDate:z.string().date("Please provide a valid date in this format YYYY-MM-DD"),
+    genre:z.string()
+    })
+    
+})
 
 
 //create movies
 const createMovies= async (req:Request,res:Response,next:NextFunction)=>{
     try {
         const movieData=req.body;
+        zodMovieSchema.parse({body:movieData});
     const result= await MovieService.createMovies(movieData)
     
     res.send({
@@ -15,6 +29,10 @@ const createMovies= async (req:Request,res:Response,next:NextFunction)=>{
     })
         
     } catch (err) {
+        
+        // res.status(500).json({
+        //     error:err
+        // })
         next(err)
     }
 
