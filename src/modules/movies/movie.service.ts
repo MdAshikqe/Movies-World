@@ -16,19 +16,25 @@ const createMovies= async(payload:TMovie)=>{
 
 //get all movies
 const getAllMovies= async(payload: Record<string,unknown>)=>{
+    //searching
     let searchTerm= "";
     if(payload?.searchTerm){
-        searchTerm = payload.searchTerm as string;
+        searchTerm = payload.searchTerm as string ;
     }
     const searchAbleField= ["title", "genre"];
-    const searchMovies= await Movie.find({
+    const searchMovies= Movie.find({
         $or:searchAbleField.map(field=>({
             [field]:{$regex:searchTerm, $options:"i"}
         }))
-    })
+    });
 
-    // const result= await Movie.find()
-    return searchMovies;
+    //filtaring movies
+    const queryObj= {...payload};
+    const excludeFields=["searchTerm"];
+    excludeFields.forEach((e)=> delete queryObj[e]);
+    const result= await searchMovies.find(queryObj)
+    
+    return result;
 }
 
 //get single movie by id-----
