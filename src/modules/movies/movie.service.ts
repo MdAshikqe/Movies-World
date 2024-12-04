@@ -1,3 +1,4 @@
+
 import { TMovie } from "./movie.interface";
 import { Movie } from "./movie.model";
 // import { format } from "date-fns";
@@ -28,11 +29,27 @@ const getAllMovies= async(payload: Record<string,unknown>)=>{
         }))
     });
 
+    //pagination 
+    //1st skip 0
+    //2nd skip = 2*10 - 1*10
+    //3rd skip = 3*10 - 2*10
+    //-----formula:  skip=(page-1)*10
+
+    const limit: number= Number(payload?.limit || 10);
+    let skip:number=0;
+
+    if(payload?.page){
+        const page= Number(payload?.page || 1)
+        skip=Number((page-1)*limit)
+    }
+    const skipedQuery=searchMovies.skip(skip)
+    const limitQuery= skipedQuery.limit(limit)
+
     //filtaring movies
     const queryObj= {...payload};
-    const excludeFields=["searchTerm"];
+    const excludeFields=["searchTerm","page","limit"];
     excludeFields.forEach((e)=> delete queryObj[e]);
-    const result= await searchMovies.find(queryObj)
+    const result= await limitQuery.find(queryObj)
     
     return result;
 }
