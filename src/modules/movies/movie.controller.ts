@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { MovieService } from "./movie.service";
+import { catchAsync } from "../../utils/catchAsync";
 
 
 
@@ -26,23 +28,17 @@ const createMovies= async (req:Request,res:Response,next:NextFunction)=>{
 
 }
 //get all movies
-const getAllMovies= async(req:Request,res:Response)=>{
-       try{
-        const result= await MovieService.getAllMovies()
+const getAllMovies= catchAsync(
+    async(req:Request,res:Response,next:NextFunction)=>{
+        const result= await MovieService.getAllMovies(req.query);
         
-        res.send({
+        res.status(200).json({
             success:true,
             message:'successfully fetch all movies',
             data:result
-        })
-       }catch(err){
-            res.status(500).json({
-                success:false,
-                message:'All Movies fetch are faild !',
-                error:err
-            })
-       }
+        });  
 }
+)
 
 
 //get single movie by id-----
