@@ -1,4 +1,4 @@
-
+import { QueryBuilder } from "../../builder/QueryBuilder";
 import { TMovie } from "./movie.interface";
 import { Movie } from "./movie.model";
 // import { format } from "date-fns";
@@ -15,58 +15,72 @@ const createMovies= async(payload:TMovie)=>{
     return result;
 }
 
+
+
 //get all movies
 const getAllMovies= async(payload: Record<string,unknown>)=>{
 
-    //searching
-    let searchTerm= "";
-    if(payload?.searchTerm){
-        searchTerm = payload.searchTerm as string ;
-    }
-    const searchAbleField= ["title", "genre"];
-    const searchMovies= Movie.find({
-        $or:searchAbleField.map(field=>({
-            [field]:{$regex:searchTerm, $options:"i"}
-        }))
-    });
+    const movieQuery= new QueryBuilder(Movie.find({}),payload)
+    .filter()
+    .search(["title","genre"])
+    .paginate()
+    .sort()
+    .fields();
 
-    //pagination 
+    const result = await movieQuery.modelQuery;
+    return result;
+    
+
+    //--------------searching------
+    // let searchTerm= "";
+    // if(payload?.searchTerm){
+    //     searchTerm = payload.searchTerm as string ;
+    // }
+    // const searchAbleField= ["title", "genre"];
+    // const searchMovies= Movie.find({
+    //     $or:searchAbleField.map(field=>({
+    //         [field]:{$regex:searchTerm, $options:"i"}
+    //     }))
+    // });
+
+      //pagination 
     //1st skip 0
     //2nd skip = 2*10 - 1*10
     //3rd skip = 3*10 - 2*10
     //-----formula:  skip=(page-1)*10
 
-    const limit: number= Number(payload?.limit || 10);
-    let skip:number=0;
+    //----pagination
+    // const limit: number= Number(payload?.limit || 10);
+    // let skip:number=0;
 
-    if(payload?.page){
-        const page= Number(payload?.page || 1)
-        skip=Number((page-1)*limit)
-    }
-    const skipedQuery=searchMovies.skip(skip)
-    const limitQuery= skipedQuery.limit(limit);
+    // if(payload?.page){
+    //     const page= Number(payload?.page || 1)
+    //     skip=Number((page-1)*limit)
+    // }
+    // const skipedQuery=searchMovies.skip(skip)
+    // const limitQuery= skipedQuery.limit(limit);
 
-    //create sorting
-    let sortBy="-releaseDate";
-    if(payload?.sortBy){
-        sortBy= payload.sortBy as string;
-    }
-    const sortQuery = limitQuery.sort(sortBy);
+    // //create sorting
+    // let sortBy="-releaseDate";
+    // if(payload?.sortBy){
+    //     sortBy= payload.sortBy as string;
+    // }
+    // const sortQuery = limitQuery.sort(sortBy);
 
-    //feilds Filtaring
-    let fields= " ";
-    if(payload?.fields){
-        fields = (payload?.fields as string).split(",").join(" ")
-    }
-    const fieldQuery= sortQuery.select(fields);
+    // //feilds Filtaring
+    // let fields= " ";
+    // if(payload?.fields){
+    //     fields = (payload?.fields as string).split(",").join(" ")
+    // }
+    // const fieldQuery= sortQuery.select(fields);
 
-    //filtaring movies
-    const queryObj= {...payload};
-    const excludeFields=["searchTerm","page","limit","sortBy","fields"];
-    excludeFields.forEach((e)=> delete queryObj[e]);
-    const result= await fieldQuery.find(queryObj)
+    // //filtaring movies
+    // const queryObj= {...payload};
+    // const excludeFields=["searchTerm","page","limit","sortBy","fields"];
+    // excludeFields.forEach((e)=> delete queryObj[e]);
+    // const result= await fieldQuery.find(queryObj)
     
-    return result;
+    // return result;
 }
 
 //get single movie by id-----
