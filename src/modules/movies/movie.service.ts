@@ -17,6 +17,7 @@ const createMovies= async(payload:TMovie)=>{
 
 //get all movies
 const getAllMovies= async(payload: Record<string,unknown>)=>{
+
     //searching
     let searchTerm= "";
     if(payload?.searchTerm){
@@ -43,13 +44,27 @@ const getAllMovies= async(payload: Record<string,unknown>)=>{
         skip=Number((page-1)*limit)
     }
     const skipedQuery=searchMovies.skip(skip)
-    const limitQuery= skipedQuery.limit(limit)
+    const limitQuery= skipedQuery.limit(limit);
+
+    //create sorting
+    let sortBy="-releaseDate";
+    if(payload?.sortBy){
+        sortBy= payload.sortBy as string;
+    }
+    const sortQuery = limitQuery.sort(sortBy);
+
+    //feilds Filtaring
+    let fields= " ";
+    if(payload?.fields){
+        fields = (payload?.fields as string).split(",").join(" ")
+    }
+    const fieldQuery= sortQuery.select(fields);
 
     //filtaring movies
     const queryObj= {...payload};
-    const excludeFields=["searchTerm","page","limit"];
+    const excludeFields=["searchTerm","page","limit","sortBy","fields"];
     excludeFields.forEach((e)=> delete queryObj[e]);
-    const result= await limitQuery.find(queryObj)
+    const result= await fieldQuery.find(queryObj)
     
     return result;
 }
